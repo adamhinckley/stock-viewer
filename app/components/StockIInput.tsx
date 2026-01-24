@@ -1,14 +1,12 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStockContext } from "../context/StockContext";
 
 const pageSize = 20;
 
-interface SymbolData {
-  symbol: string;
-  description: string;
-}
+// Use the SymbolData type from StockContext for consistency
+import type { SymbolData } from "../context/StockContext";
 
 interface SymbolsResponse {
   page: number;
@@ -31,12 +29,22 @@ async function getSymbols(page = 1, search = ""): Promise<SymbolsResponse> {
 const StockIInput = () => {
   const { selectedStock, setSelectedStock } = useStockContext();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Debounce search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [search]);
+
   const { data, error, isLoading } = useQuery<SymbolsResponse>({
-    queryKey: ["symbols", 1, search],
-    queryFn: () => getSymbols(1, search),
-    enabled: search.length > 2 && dropdownOpen, // Only fetch when searching
+    queryKey: ["symbols", 1, debouncedSearch],
+    queryFn: () => getSymbols(1, debouncedSearch),
+    enabled: debouncedSearch.length > 2 && dropdownOpen,
   });
 
   const handleSelect = (symbol: SymbolData) => {
@@ -46,7 +54,7 @@ const StockIInput = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto p-12">
       <div className="relative">
         <input
           type="text"
@@ -59,7 +67,7 @@ const StockIInput = () => {
           }}
           onFocus={() => setDropdownOpen(true)}
           onBlur={() => setDropdownOpen(false)}
-          className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3  rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
         />
         {dropdownOpen && search && data && data.symbols.length > 0 && (
           <ul className="absolute z-10 left-0 right-0 bg-gray-900 text-gray-100 border border-gray-700 border-t-0 max-h-[calc(100vh-48px)] overflow-y-auto rounded-b-md shadow">
