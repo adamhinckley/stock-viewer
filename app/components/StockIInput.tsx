@@ -27,7 +27,8 @@ async function getSymbols(page = 1, search = ""): Promise<SymbolsResponse> {
 }
 
 const StockIInput = () => {
-  const { selectedStock, setSelectedStock } = useStockContext();
+  const { selectedStock, setSelectedStock, watchingStocks, setWatchingStocks } =
+    useStockContext();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -49,12 +50,16 @@ const StockIInput = () => {
 
   const handleSelect = (symbol: SymbolData) => {
     setSelectedStock(symbol);
+    // Avoid duplicates
+    if (!watchingStocks.find((s: SymbolData) => s.symbol === symbol.symbol)) {
+      setWatchingStocks([...watchingStocks, symbol]);
+    }
     setDropdownOpen(false);
-    setSearch(symbol.symbol);
+    setSearch("");
   };
 
   return (
-    <div className="max-w-md mx-auto p-12">
+    <div>
       <div className="relative">
         <input
           type="text"
@@ -95,19 +100,6 @@ const StockIInput = () => {
         <div className="mt-2 text-gray-500">Loading symbols...</div>
       )}
       {error && <div className="mt-2 text-red-500">Error loading symbols</div>}
-      {selectedStock && (
-        <div className="mt-6 p-4 border border-gray-200 rounded-md bg-black">
-          <h4 className="font-bold mb-2">Selected Stock</h4>
-          <div>
-            <span className="font-semibold">Symbol:</span>{" "}
-            {selectedStock.symbol}
-          </div>
-          <div>
-            <span className="font-semibold">Description:</span>{" "}
-            {selectedStock.description}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
