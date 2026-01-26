@@ -1,14 +1,12 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStockContext } from "../context/StockContext";
 
 const pageSize = 20;
 
-interface SymbolData {
-  symbol: string;
-  description: string;
-}
+// Use the SymbolData type from StockContext for consistency
+import type { SymbolData } from "../context/StockContext";
 
 interface SymbolsResponse {
   page: number;
@@ -29,24 +27,39 @@ async function getSymbols(page = 1, search = ""): Promise<SymbolsResponse> {
 }
 
 const StockIInput = () => {
-  const { selectedStock, setSelectedStock } = useStockContext();
+  const { selectedStock, setSelectedStock, watchingStocks, setWatchingStocks } =
+    useStockContext();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Debounce search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [search]);
+
   const { data, error, isLoading } = useQuery<SymbolsResponse>({
-    queryKey: ["symbols", 1, search],
-    queryFn: () => getSymbols(1, search),
-    enabled: search.length > 2 && dropdownOpen, // Only fetch when searching
+    queryKey: ["symbols", 1, debouncedSearch],
+    queryFn: () => getSymbols(1, debouncedSearch),
+    enabled: debouncedSearch.length > 2 && dropdownOpen,
   });
 
   const handleSelect = (symbol: SymbolData) => {
     setSelectedStock(symbol);
+    // Avoid duplicates
+    if (!watchingStocks.find((s: SymbolData) => s.symbol === symbol.symbol)) {
+      setWatchingStocks([...watchingStocks, symbol]);
+    }
     setDropdownOpen(false);
-    setSearch(symbol.symbol);
+    setSearch("");
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <div>
       <div className="relative">
         <input
           type="text"
@@ -59,7 +72,7 @@ const StockIInput = () => {
           }}
           onFocus={() => setDropdownOpen(true)}
           onBlur={() => setDropdownOpen(false)}
-          className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3  rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
         />
         {dropdownOpen && search && data && data.symbols.length > 0 && (
           <ul className="absolute z-10 left-0 right-0 bg-gray-900 text-gray-100 border border-gray-700 border-t-0 max-h-[calc(100vh-48px)] overflow-y-auto rounded-b-md shadow">
@@ -87,19 +100,6 @@ const StockIInput = () => {
         <div className="mt-2 text-gray-500">Loading symbols...</div>
       )}
       {error && <div className="mt-2 text-red-500">Error loading symbols</div>}
-      {selectedStock && (
-        <div className="mt-6 p-4 border border-gray-200 rounded-md bg-black">
-          <h4 className="font-bold mb-2">Selected Stock</h4>
-          <div>
-            <span className="font-semibold">Symbol:</span>{" "}
-            {selectedStock.symbol}
-          </div>
-          <div>
-            <span className="font-semibold">Description:</span>{" "}
-            {selectedStock.description}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
