@@ -63,7 +63,7 @@ const StockIInput = () => {
       <div className="relative">
         <input
           type="text"
-          placeholder="Search stocks..."
+          placeholder="Add stock..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
