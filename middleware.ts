@@ -30,11 +30,7 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect /dashboard route
-  if (request.nextUrl.pathname.startsWith("/dashboard") && !user) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
+  // No auth protection - allow access to all routes
   // Redirect to dashboard if already logged in and trying to access home
   if (request.nextUrl.pathname === "/" && user) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
