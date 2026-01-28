@@ -66,39 +66,43 @@ const AuthBar = () => {
   };
 
   return (
-    <div className="sticky top-0 z-40 flex items-center justify-between gap-4 bg-white/85 dark:bg-gray-900/85 backdrop-blur-md px-4 sm:px-6 py-3 border-b border-gray-200/80 dark:border-gray-700/80 shadow-sm">
-      <div className="mx-auto px-4 w-full max-w-6xl flex items-center justify-between gap-3 sm:gap-4 flex-col sm:flex-row">
-        <div className="leading-tight flex flex-row items-center gap-3">
-          <div className="flex flex-row items-center  justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
-            <svg
-              className="w-8 h-8 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-              />
-            </svg>
+    <div className="sticky top-0 z-40 bg-white/85 dark:bg-gray-900/85 backdrop-blur-md border-b border-gray-200/80 dark:border-gray-700/80 shadow-sm">
+      <div className="mx-auto px-4 sm:px-6 py-3 w-full max-w-6xl">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex flex-row items-center gap-3 flex-shrink-0">
+            <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg">
+              <svg
+                className="w-6 h-6 sm:w-8 sm:h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                />
+              </svg>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              Stock Viewer
+            </h1>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Stock Viewer
-          </h1>
+
+          <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+            Save your favorite stocks • Sign in to get started
+          </p>
+
+          {!loading && (
+            <button
+              onClick={user ? handleSignOut : () => setIsModalOpen(true)}
+              className="cursor-pointer px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm sm:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 w-full sm:w-auto text-center"
+            >
+              {user ? "Logout" : "Sign In / Create Account"}
+            </button>
+          )}
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400 font-medium hidden sm:block">
-          Save your favorite stocks • Sign in to get started
-        </p>
-        {!loading && (
-          <button
-            onClick={user ? handleSignOut : () => setIsModalOpen(true)}
-            className="cursor-pointer px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            {user ? "Logout" : "Sign In / Create Account"}
-          </button>
-        )}
       </div>
       {isModalOpen && <AuthModal onClose={() => setIsModalOpen(false)} />}
     </div>

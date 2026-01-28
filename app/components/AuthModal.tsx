@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import Icon from "../assets/icon";
+import Icon from "./Icon";
 import { createPortal } from "react-dom";
 
 interface AuthModalProps {
