@@ -15,10 +15,7 @@ const AuthBar = () => {
   const supabase = createClient();
   const [user, setUser] = useState<UserSummary | null>(null);
   const [loading, setLoading] = useState(true);
-  const [show, setShow] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  console.log("user", user);
 
   useEffect(() => {
     let active = true;
@@ -30,7 +27,6 @@ const AuthBar = () => {
       if (!active) return;
       setUser(user ?? null);
       setLoading(false);
-      setShow(!!user);
     };
 
     getSession();
@@ -39,7 +35,6 @@ const AuthBar = () => {
       (_event, session) => {
         if (!active) return;
         setUser(session?.user ?? null);
-        setShow(!!session?.user);
         setLoading(false);
       },
     );
@@ -53,14 +48,12 @@ const AuthBar = () => {
   // Hide on auth page to keep landing clean
   useEffect(() => {
     if (pathname === "/") {
-      setShow(false);
     }
   }, [pathname]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    setShow(false);
     router.push("/");
     router.refresh();
   };
