@@ -1,20 +1,53 @@
+"use client";
+import { Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { getProfile, getCompanyNews } from "../util/dataFetchingFunctions";
+
 import type { CompanyProfile } from "../util/interfaces";
+import Suspend from "./Suspend";
+import NewsFeed from "./NewsFeed";
 
-type Props = { profile: CompanyProfile };
+const today = new Date();
+const twoDaysAgo = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
 
-const formatNumber = (value: number) =>
-  new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(value);
+const fromDate = twoDaysAgo.toISOString().split("T")[0];
+const toDate = today.toISOString().split("T")[0];
 
-const formatCurrency = (value: number, currency: string) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 2,
-  }).format(value);
+console.log("fromDate", fromDate);
+console.log("toDate", toDate);
 
-const CompanyProfile = ({ profile }: Props) => {
-  if (!profile) return;
+const CompanyProfile = () => {
+  const searchParams = useSearchParams();
+  const symbol = searchParams.get("symbol") || "";
+
+  const {
+    data: profileData,
+    error: profileError,
+    isLoading: profileLoading,
+  } = useQuery<CompanyProfile>({
+    queryKey: ["company-profile", symbol],
+    queryFn: () => getProfile(symbol),
+    enabled: !!symbol,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+
+  const {
+    data: newsData,
+    error: newsError,
+    isLoading: newsLoading,
+  } = useQuery<CompanyProfile>({
+    queryKey: ["company-news", symbol],
+    queryFn: () => getCompanyNews(symbol, fromDate, toDate),
+    enabled: !!symbol,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+
+  console.log("profileData", profileData);
+
   return (
     <section className="">
       <Link
@@ -36,8 +69,9 @@ const CompanyProfile = ({ profile }: Props) => {
         </svg>
         Back to Dashboard
       </Link>
+      <NewsFeed />
     </section>
   );
 };
 
-export default CompanyProfile;
+export default Suspend(CompanyProfile);
