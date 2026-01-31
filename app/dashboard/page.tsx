@@ -1,11 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
-// import { GET, getSymbols } from "./api/route";
-// import { ClientPageRoot } from "next/dist/client/components/client-page";
-import StockIInput from "../components/StockIInput";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { StockContextProvider } from "../context/StockContext";
-import { Main } from "next/document";
 import MainView from "../components/MainView";
 
 console.log("API_URL:", process.env.NEXT_PUBLIC_WEBSOCKET_URL);
@@ -39,11 +32,5 @@ export default function Dashboard() {
   //   };
   // }, []);
 
-  return (
-    <QueryClientProvider client={new QueryClient()}>
-      <StockContextProvider>
-        <MainView />
-      </StockContextProvider>
-    </QueryClientProvider>
-  );
+  return <MainView />;
 }
