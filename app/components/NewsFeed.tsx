@@ -95,7 +95,7 @@ const NewsFeed = () => {
   };
 
   return (
-    <div className="w-full max-w-none sm:max-w-[375px]">
+    <div className="w-full max-w-none lg:max-w-[375px]">
       <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
         Recent News
       </h2>

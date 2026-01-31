@@ -9,7 +9,7 @@ const MainView = () => {
 
   return (
     <main className="min-h-screen">
-      <div className="sticky top-[73px] z-30 px-4 pt-4">
+      <div className="sticky  z-30 px-4 pt-4">
         <StockIInput />
       </div>
       <div className="px-4 ">
