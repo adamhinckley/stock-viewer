@@ -18,7 +18,7 @@ const toDate = today.toISOString().split("T")[0];
 console.log("fromDate", fromDate);
 console.log("toDate", toDate);
 
-const CompanyProfile = () => {
+const CompanyPage = () => {
   const searchParams = useSearchParams();
   const symbol = searchParams.get("symbol") || "";
 
@@ -74,4 +74,4 @@ const CompanyProfile = () => {
   );
 };
 
-export default Suspend(CompanyProfile);
+export default Suspend(CompanyPage);

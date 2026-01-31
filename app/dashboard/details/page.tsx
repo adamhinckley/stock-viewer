@@ -1,12 +1,7 @@
-"use client";
-import { Suspense } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
-import CompanyProfile from "@/app/components/CompanyProfile";
-import { getProfile } from "@/app/util/dataFetchingFunctions";
+import CompanyPage from "@/app/components/CompanyPage";
 
-const DetailsPage = () => {
-  return <CompanyProfile />;
+const Page = () => {
+  return <CompanyPage />;
 };
 
-export default DetailsPage;
+export default Page;
