@@ -3,6 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { getProfile } from "../util/dataFetchingFunctions";
+
 import type { SymbolData } from "../context/StockContext";
 import type { CompanyProfile } from "../util/interfaces";
 
@@ -10,31 +12,21 @@ interface TileProps {
   stock: SymbolData;
 }
 
-interface CompanyProfileResponse {
-  profile: CompanyProfile;
-  financialsReported: unknown;
-  news: unknown;
-}
-
 const Tile = ({ stock }: TileProps) => {
   const router = useRouter();
 
   const { data: profileData, isLoading: profileLoading } =
-    useQuery<CompanyProfileResponse>({
+    useQuery<CompanyProfile>({
       queryKey: ["company-profile", stock.symbol],
-      queryFn: async () => {
-        const res = await fetch(`/api/company-profile?symbol=${stock.symbol}`);
-        if (!res.ok) throw new Error("Failed to fetch company profile");
-        return res.json();
-      },
+      queryFn: () => getProfile(stock.symbol),
       enabled: !!stock.symbol,
       staleTime: Infinity,
       gcTime: Infinity,
     });
 
   const handleClick = () => {
-    if (profileData?.profile?.ticker) {
-      router.push(`/dashboard/details?symbol=${profileData.profile.ticker}`);
+    if (profileData?.ticker) {
+      router.push(`/dashboard/details?symbol=${profileData.ticker}`);
     }
   };
 
@@ -45,10 +37,10 @@ const Tile = ({ stock }: TileProps) => {
     >
       {profileLoading ? (
         <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
-      ) : profileData?.profile?.logo ? (
+      ) : profileData?.logo ? (
         <Image
-          src={profileData.profile.logo}
-          alt={`${profileData.profile.name} logo`}
+          src={profileData.logo}
+          alt={`${profileData.name} logo`}
           width={64}
           height={64}
           className="rounded-full object-contain"
@@ -64,7 +56,7 @@ const Tile = ({ stock }: TileProps) => {
           {profileLoading ? (
             <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 animate-pulse rounded mx-auto" />
           ) : (
-            profileData?.profile?.name || stock.description
+            profileData?.name || stock.description
           )}
         </h2>
       </div>
