@@ -1,13 +1,14 @@
 "use client";
-import { Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile, getCompanyNews } from "../util/dataFetchingFunctions";
 
-import type { CompanyProfile } from "../util/interfaces";
 import Suspend from "./Suspend";
 import NewsFeed from "./NewsFeed";
+import CompanyProfile from "./CompanyProfile";
+
+import type { CompanyProfile as ConpanyProfileType } from "../util/interfaces";
 
 const today = new Date();
 const twoDaysAgo = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
@@ -26,7 +27,7 @@ const CompanyPage = () => {
     data: profileData,
     error: profileError,
     isLoading: profileLoading,
-  } = useQuery<CompanyProfile>({
+  } = useQuery<ConpanyProfileType>({
     queryKey: ["company-profile", symbol],
     queryFn: () => getProfile(symbol),
     enabled: !!symbol,
@@ -38,7 +39,7 @@ const CompanyPage = () => {
     data: newsData,
     error: newsError,
     isLoading: newsLoading,
-  } = useQuery<CompanyProfile>({
+  } = useQuery<ConpanyProfileType>({
     queryKey: ["company-news", symbol],
     queryFn: () => getCompanyNews(symbol, fromDate, toDate),
     enabled: !!symbol,
@@ -46,10 +47,8 @@ const CompanyPage = () => {
     gcTime: Infinity,
   });
 
-  console.log("profileData", profileData);
-
   return (
-    <section className="">
+    <section className="px-4">
       <Link
         href="/dashboard"
         className="mt-4 inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors group w-fit"
@@ -69,7 +68,10 @@ const CompanyPage = () => {
         </svg>
         Back to Dashboard
       </Link>
-      <NewsFeed />
+      <div className="flex flex-col lg:flex-row">
+        <CompanyProfile />
+        <NewsFeed />
+      </div>
     </section>
   );
 };
