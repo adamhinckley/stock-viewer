@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import CompanyProfile, {
@@ -11,7 +12,7 @@ async function getProfile(symbol: string) {
   return res.json();
 }
 
-const detailsPage = () => {
+const DetailsContent = () => {
   const searchParams = useSearchParams();
   const symbol = searchParams.get("symbol") || "";
   const name = searchParams.get("name");
@@ -32,4 +33,12 @@ const detailsPage = () => {
   );
 };
 
-export default detailsPage;
+const DetailsPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DetailsContent />
+    </Suspense>
+  );
+};
+
+export default DetailsPage;
