@@ -4,25 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import type { SymbolData } from "../context/StockContext";
+import type { CompanyProfile } from "../util/interfaces";
 
 interface TileProps {
   stock: SymbolData;
-}
-
-interface CompanyProfile {
-  country: string;
-  currency: string;
-  estimateCurrency: string;
-  exchange: string;
-  finnhubIndustry: string;
-  ipo: string;
-  logo: string;
-  marketCapitalization: number;
-  name: string;
-  phone: string;
-  shareOutstanding: number;
-  ticker: string;
-  weburl: string;
 }
 
 interface CompanyProfileResponse {
