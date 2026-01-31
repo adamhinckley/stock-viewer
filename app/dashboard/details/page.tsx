@@ -2,9 +2,7 @@
 import { Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import CompanyProfile, {
-  type CompanyProfileInterface,
-} from "@/app/components/CompanyProfile";
+import CompanyProfile from "@/app/components/CompanyProfile";
 
 async function getProfile(symbol: string) {
   const res = await fetch(`/api/company-profile?symbol=${symbol}`);
@@ -15,22 +13,19 @@ async function getProfile(symbol: string) {
 const DetailsContent = () => {
   const searchParams = useSearchParams();
   const symbol = searchParams.get("symbol") || "";
-  const name = searchParams.get("name");
 
   const { data, error, isLoading } = useQuery({
     queryKey: ["company-profile", symbol],
     queryFn: () => getProfile(symbol),
     enabled: !!symbol,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 
   console.log("data", data);
   const { profile, finacialsReported } = data || {};
 
-  return (
-    <div>
-      <CompanyProfile profile={profile} />
-    </div>
-  );
+  return <CompanyProfile profile={profile} />;
 };
 
 const DetailsPage = () => {
