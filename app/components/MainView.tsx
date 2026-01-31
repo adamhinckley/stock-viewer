@@ -8,13 +8,13 @@ const MainView = () => {
     useStockContext();
 
   return (
-    <main className="min-h-screen max-w-6xl mx-auto">
+    <main className="min-h-screen">
       <div className="sticky top-[73px] z-30 px-4 pt-4">
         <StockIInput />
       </div>
       <div className="px-4 ">
         {watchingStocks.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6 mt-6">
             {watchingStocks.map((stock) => (
               <Tile key={stock.symbol} stock={stock} />
             ))}

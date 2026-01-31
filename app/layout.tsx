@@ -27,10 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
       >
         <AuthBar />
-        <Providers>{children}</Providers>
+        <div className="mx-auto max-w-6xl">
+          <Providers>{children}</Providers>
+        </div>
       </body>
     </html>
   );
