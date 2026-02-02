@@ -39,7 +39,9 @@ const NewsFeed = () => {
 
   if (newsLoading) {
     return (
-      <div className="text-gray-500 dark:text-gray-400">Loading news...</div>
+      <div className="text-gray-500 dark:text-gray-400 w-full lg:max-w-[375px]">
+        Loading news...
+      </div>
     );
   }
 

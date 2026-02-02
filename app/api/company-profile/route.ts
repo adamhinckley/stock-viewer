@@ -1,6 +1,6 @@
 export async function GET(request: Request) {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL;
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+  const finnhubBaseURL = process.env.NEXT_PUBLIC_FINNHUB_API_URL;
+  const finnhubApiKey = process.env.NEXT_PUBLIC_FINNHUB_API_KEY;
   const { searchParams } = new URL(request.url);
   const symbol = searchParams.get("symbol");
 
@@ -13,12 +13,14 @@ export async function GET(request: Request) {
 
   try {
     const [profileRes, financialsReportedRes, newsRes] = await Promise.all([
-      fetch(`${baseURL}/stock/profile2?symbol=${symbol}&token=${apiKey}`),
       fetch(
-        `${baseURL}/stock/financials-reported?symbol=${symbol}&token=${apiKey}`,
+        `${finnhubBaseURL}/stock/profile2?symbol=${symbol}&token=${finnhubApiKey}`,
       ),
       fetch(
-        `${baseURL}/company-news?&from=2026-01-30&to=2026-01-30&symbol=${symbol}&token=${apiKey}`,
+        `${finnhubBaseURL}/stock/financials-reported?symbol=${symbol}&token=${finnhubApiKey}`,
+      ),
+      fetch(
+        `${finnhubBaseURL}/company-news?&from=2026-01-30&to=2026-01-30&symbol=${symbol}&token=${finnhubApiKey}`,
       ),
     ]);
 

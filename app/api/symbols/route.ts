@@ -1,8 +1,8 @@
 let cachedSymbols: any[] | null = null;
 
 export async function GET(request: Request) {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL;
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+  const finnhubBaseURL = process.env.NEXT_PUBLIC_FINNHUB_API_URL;
+  const finnhubApiKey = process.env.NEXT_PUBLIC_FINNHUB_API_KEY;
   const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get("page") || "1", 10);
   const pageSize = parseInt(searchParams.get("pageSize") || "50", 10);
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     // Only fetch if not cached
     if (!cachedSymbols) {
       const response = await fetch(
-        `${baseURL}/stock/symbol?exchange=US&token=${apiKey}`,
+        `${finnhubBaseURL}/stock/symbol?exchange=US&token=${finnhubApiKey}`,
       );
       if (!response.ok) {
         return new Response(
