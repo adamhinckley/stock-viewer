@@ -1,6 +1,6 @@
 export async function GET(request: Request) {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL;
-  const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+  const finnhubBaseURL = process.env.NEXT_PUBLIC_FINNHUB_API_URL;
+  const finnhubApiKey = process.env.NEXT_PUBLIC_FINNHUB_API_KEY;
   const { searchParams } = new URL(request.url);
   const symbol = searchParams.get("symbol");
   if (!symbol) {
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
   try {
     const apiRes = await fetch(
-      `${baseURL}/stock/metric?symbol=${symbol}&metric=all&token=${apiKey}`,
+      `${finnhubBaseURL}/stock/metric?symbol=${symbol}&metric=all&token=${finnhubApiKey}`,
     );
     if (!apiRes.ok) {
       return new Response(

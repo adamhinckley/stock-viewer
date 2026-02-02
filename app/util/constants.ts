@@ -1,2 +1,4 @@
-export const baseURL = process.env.NEXT_PUBLIC_API_URL;
-export const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+export const finnhubBaseURL = process.env.NEXT_PUBLIC_FINNHUB_API_URL;
+export const finnhubApiKey = process.env.NEXT_PUBLIC_FINNHUB_API_KEY;
+export const alphavantageBaseURL = process.env.NEXT_PUBLIC_ALPHAVANTAGE_API_URL;
+export const alphavantageApiKey = process.env.NEXT_PUBLIC_ALPHAVANTAGE_API_KEY;
