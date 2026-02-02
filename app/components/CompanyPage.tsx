@@ -9,6 +9,7 @@ import NewsFeed from "./NewsFeed";
 import CompanyProfile from "./CompanyProfile";
 
 import type { CompanyProfile as ConpanyProfileType } from "../util/interfaces";
+import CompanyFinancials from "./CompanyFinancials";
 
 const today = new Date();
 const twoDaysAgo = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
@@ -68,8 +69,11 @@ const CompanyPage = () => {
         </svg>
         Back to Dashboard
       </Link>
-      <div className="flex flex-col lg:flex-row">
-        <CompanyProfile />
+      <div className="flex flex-col lg:flex-row w-full">
+        <div className="w-full ">
+          <CompanyProfile />
+          <CompanyFinancials />
+        </div>
         <NewsFeed />
       </div>
     </section>
