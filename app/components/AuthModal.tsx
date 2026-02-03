@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import Icon from "./Icon";
 import { createPortal } from "react-dom";
+import { backendURL } from "../util/constants";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -22,7 +22,6 @@ const AuthModal = ({ onClose }: AuthModalProps) => {
     password?: string;
   }>({});
   const router = useRouter();
-  const supabase = createClient();
 
   // Validation functions
   const validateEmail = (emailValue: string): string | null => {
@@ -89,24 +88,52 @@ const AuthModal = ({ onClose }: AuthModalProps) => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              first_name: firstName,
-            },
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+        // TODO: this needs to be connect in the backend
+        const response = await fetch(`${backendURL}/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            email,
+            password,
+            firstName,
+          }),
         });
-        if (error) throw error;
-        setMessage("Check your email for the confirmation link!");
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Sign up failed");
+        }
+
+        setMessage("Account created! Please sign in.");
+        setIsSignUp(false);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+        // Login endpoint
+        const response = await fetch(`${backendURL}/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
         });
-        if (error) throw error;
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Login failed");
+        }
+
+        const { access_token } = await response.json();
+
+        if (!access_token) {
+          throw new Error("Invalid response from server");
+        }
+
+        document.cookie = `access_token=${access_token}; path=/; max-age=${60 * 60 * 24 * 7}`; // 7 days
+
         onClose();
         router.push("/dashboard");
         router.refresh();
