@@ -2,13 +2,17 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { getProfile, getCompanyNews } from "../util/dataFetchingFunctions";
+import { getCompanyDetails } from "../util/dataFetchingFunctions";
 
 import Suspend from "./Suspend";
 import NewsFeed from "./NewsFeed";
 import CompanyProfile from "./CompanyProfile";
 
-import type { CompanyProfile as ConpanyProfileType } from "../util/interfaces";
+import type {
+  CompanyData,
+  GlobalQuoteResponse,
+  NewsItem,
+} from "../util/interfaces";
 import CompanyFinancials from "./CompanyFinancials";
 
 const today = new Date();
@@ -25,28 +29,18 @@ const CompanyPage = () => {
   const symbol = searchParams.get("symbol") || "";
 
   const {
-    data: profileData,
-    error: profileError,
-    isLoading: profileLoading,
-  } = useQuery<ConpanyProfileType>({
-    queryKey: ["company-profile", symbol],
-    queryFn: () => getProfile(symbol),
+    data: data,
+    error: error,
+    isLoading: loading,
+  } = useQuery<CompanyData>({
+    queryKey: ["company-news", symbol],
+    queryFn: () => getCompanyDetails(symbol),
     enabled: !!symbol,
     staleTime: Infinity,
     gcTime: Infinity,
   });
 
-  const {
-    data: newsData,
-    error: newsError,
-    isLoading: newsLoading,
-  } = useQuery<ConpanyProfileType>({
-    queryKey: ["company-news", symbol],
-    queryFn: () => getCompanyNews(symbol, fromDate, toDate),
-    enabled: !!symbol,
-    staleTime: Infinity,
-    gcTime: Infinity,
-  });
+  console.log("data", data);
 
   return (
     <section className="px-4">
@@ -71,10 +65,22 @@ const CompanyPage = () => {
       </Link>
       <div className="flex flex-col lg:flex-row w-full">
         <div className="w-full ">
-          <CompanyProfile />
-          <CompanyFinancials />
+          <CompanyProfile
+            profile={data?.profile as CompanyProfile}
+            loading={loading}
+            error={error}
+          />
+          <CompanyFinancials
+            financials={data?.financials as GlobalQuoteResponse}
+            loading={loading}
+            error={error}
+          />
         </div>
-        <NewsFeed />
+        <NewsFeed
+          news={data?.news as NewsItem[]}
+          loading={loading}
+          error={error}
+        />
       </div>
     </section>
   );

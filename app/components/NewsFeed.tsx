@@ -1,8 +1,5 @@
-"use client";
-import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { FixedSizeList } from "react-window";
-import { getCompanyNews } from "../util/dataFetchingFunctions";
 
 interface NewsItem {
   category: string;
@@ -16,28 +13,21 @@ interface NewsItem {
   url: string;
 }
 
-const today = new Date();
-const twoDaysAgo = new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000);
+interface NewsFeedProps {
+  news: NewsItem[];
+  loading: boolean;
+  error: any;
+}
 
-const fromDate = twoDaysAgo.toISOString().split("T")[0];
-const toDate = today.toISOString().split("T")[0];
+const NewsFeed = ({ news, loading, error }: NewsFeedProps) => {
+  // Handle errors in useEffect
+  useEffect(() => {
+    if (error) {
+      console.error("Failed to fetch news:", error);
+    }
+  }, [error]);
 
-const NewsFeed = () => {
-  const searchParams = useSearchParams();
-  const symbol = searchParams.get("symbol") || "";
-  const {
-    data: newsData,
-    error: newsError,
-    isLoading: newsLoading,
-  } = useQuery<NewsItem[]>({
-    queryKey: ["company-news", symbol],
-    queryFn: () => getCompanyNews(symbol, fromDate, toDate),
-    enabled: !!symbol,
-    staleTime: Infinity,
-    gcTime: Infinity,
-  });
-
-  if (newsLoading) {
+  if (loading) {
     return (
       <div className="text-gray-500 dark:text-gray-400 w-full lg:max-w-[375px]">
         Loading news...
@@ -45,11 +35,11 @@ const NewsFeed = () => {
     );
   }
 
-  if (newsError) {
+  if (error) {
     return <div className="text-red-500">Error loading news</div>;
   }
 
-  if (!newsData || newsData.length === 0) {
+  if (!news || news.length === 0) {
     return (
       <div className="text-gray-500 dark:text-gray-400">No news available</div>
     );
@@ -62,7 +52,7 @@ const NewsFeed = () => {
     index: number;
     style: React.CSSProperties;
   }) => {
-    const item = newsData[index];
+    const item = news[index];
     const date = new Date(item.datetime * 1000);
     const isToday = new Date().toDateString() === date.toDateString();
     const timeString = isToday
@@ -104,7 +94,7 @@ const NewsFeed = () => {
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
         <FixedSizeList
           height={600}
-          itemCount={newsData.length}
+          itemCount={news.length}
           itemSize={80}
           width="100%"
         >
