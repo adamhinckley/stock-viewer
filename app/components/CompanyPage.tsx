@@ -34,7 +34,7 @@ const CompanyPage = () => {
     isLoading: loading,
   } = useQuery<CompanyData>({
     queryKey: ["company-news", symbol],
-    queryFn: () => getCompanyDetails(symbol, fromDate, toDate),
+    queryFn: () => getCompanyDetails(symbol),
     enabled: !!symbol,
     staleTime: Infinity,
     gcTime: Infinity,
