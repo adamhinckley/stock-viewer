@@ -3,10 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { getProfile } from "../util/dataFetchingFunctions";
+import { getCompanyDetails } from "../util/dataFetchingFunctions";
 
 import type { SymbolData } from "../context/StockContext";
-import type { CompanyProfile } from "../util/interfaces";
+import type { CompanyData } from "../util/interfaces";
 
 interface TileProps {
   stock: SymbolData;
@@ -16,19 +16,21 @@ const Tile = ({ stock }: TileProps) => {
   const router = useRouter();
 
   const { data: profileData, isLoading: profileLoading } =
-    useQuery<CompanyProfile>({
+    useQuery<CompanyData>({
       queryKey: ["company-profile", stock.symbol],
-      queryFn: () => getProfile(stock.symbol),
+      queryFn: () => getCompanyDetails(stock.symbol, "include=logo"),
       enabled: !!stock.symbol,
       staleTime: Infinity,
       gcTime: Infinity,
     });
 
   const handleClick = () => {
-    if (profileData?.ticker) {
-      router.push(`/dashboard/details?symbol=${profileData.ticker}`);
+    if (stock.symbol) {
+      router.push(`/dashboard/details?symbol=${stock.symbol}`);
     }
   };
+
+  const { logo, name } = profileData?.nameAndLogo || {};
 
   return (
     <div
@@ -37,10 +39,10 @@ const Tile = ({ stock }: TileProps) => {
     >
       {profileLoading ? (
         <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
-      ) : profileData?.logo ? (
+      ) : logo ? (
         <Image
-          src={profileData.logo}
-          alt={`${profileData.name} logo`}
+          src={logo}
+          alt={`${name} logo`}
           width={64}
           height={64}
           className="rounded-full object-contain"
@@ -56,7 +58,7 @@ const Tile = ({ stock }: TileProps) => {
           {profileLoading ? (
             <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 animate-pulse rounded mx-auto" />
           ) : (
-            profileData?.name || stock.description
+            name || stock.description
           )}
         </h2>
       </div>
