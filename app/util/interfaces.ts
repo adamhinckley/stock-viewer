@@ -14,6 +14,18 @@ export interface CompanyProfile {
   weburl: string;
 }
 
+export interface NewsItem {
+  category: string;
+  datetime: number;
+  headline: string;
+  id: number;
+  image: string;
+  related: string;
+  source: string;
+  summary: string;
+  url: string;
+}
+
 export interface GlobalQuote {
   "01. symbol": string;
   "02. open": string;
@@ -30,4 +42,10 @@ export interface GlobalQuote {
 export interface GlobalQuoteResponse {
   "Global Quote": GlobalQuote;
   "Error Message"?: string;
+}
+
+export interface CompanyData {
+  profile: CompanyProfile;
+  news: NewsItem[];
+  financials: GlobalQuoteResponse;
 }

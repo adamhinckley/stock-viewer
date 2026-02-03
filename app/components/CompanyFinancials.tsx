@@ -1,28 +1,17 @@
-"use client";
-import { getFinancials } from "../util/dataFetchingFunctions";
-import { useSearchParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-
 import type { GlobalQuoteResponse } from "../util/interfaces";
 
-const CompanyFinancials = () => {
-  const searchParams = useSearchParams();
-  const symbol = searchParams.get("symbol") || "";
-  const {
-    data: financialsData,
-    error: financialsError,
-    isLoading: financialsLoading,
-  } = useQuery<GlobalQuoteResponse>({
-    queryKey: ["company-quote", symbol],
-    queryFn: () => getFinancials(symbol),
-    enabled: !!symbol,
-  });
-  const quote = financialsData?.["Global Quote"];
-  const hasError = Boolean(
-    !financialsLoading &&
-    !quote &&
-    (financialsError || (financialsData && financialsData["Error Message"])),
-  );
+type CompanyFinancialsProps = {
+  financials: GlobalQuoteResponse | null;
+  loading: boolean;
+  error: Error | null;
+};
+
+const CompanyFinancials = ({
+  financials,
+  loading,
+  error,
+}: CompanyFinancialsProps) => {
+  const quote = financials?.["Global Quote"];
 
   const formatNumber = (value: string | undefined) => {
     if (!value) {
@@ -49,7 +38,7 @@ const CompanyFinancials = () => {
     return parsed.toLocaleString();
   };
 
-  if (financialsLoading) {
+  if (loading) {
     return (
       <div className="w-full rounded-lg p-6">
         <div className="animate-pulse space-y-4">
@@ -67,13 +56,11 @@ const CompanyFinancials = () => {
     );
   }
 
-  if (hasError || !quote) {
+  if (error || !quote) {
     return (
       <div className="w-full rounded-lg p-6">
         <p className="text-gray-500 dark:text-gray-400">
-          {hasError
-            ? "Error loading financials"
-            : "No financial data available"}
+          {error ? "Error loading financials" : "No financial data available"}
         </p>
       </div>
     );
