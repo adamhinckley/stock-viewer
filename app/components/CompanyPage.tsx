@@ -34,13 +34,11 @@ const CompanyPage = () => {
     isLoading: loading,
   } = useQuery<CompanyData>({
     queryKey: ["company-news", symbol],
-    queryFn: () => getCompanyDetails(symbol),
+    queryFn: () => getCompanyDetails(symbol, "include=profile,financials,news"),
     enabled: !!symbol,
     staleTime: Infinity,
     gcTime: Infinity,
   });
-
-  console.log("data", data);
 
   return (
     <section className="px-4">

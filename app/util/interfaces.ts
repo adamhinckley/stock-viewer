@@ -26,6 +26,11 @@ export interface NewsItem {
   url: string;
 }
 
+export interface NameAndLogo {
+  name: string;
+  logo: string;
+}
+
 export interface GlobalQuote {
   "01. symbol": string;
   "02. open": string;
@@ -48,4 +53,5 @@ export interface CompanyData {
   profile: CompanyProfile;
   news: NewsItem[];
   financials: GlobalQuoteResponse;
+  nameAndLogo: NameAndLogo;
 }
